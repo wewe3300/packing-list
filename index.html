@@ -1,0 +1,460 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>出國行李準備清單</title>
+  <style>
+    body { font-family: "Segoe UI", sans-serif; margin: 0; padding: 1rem; background: #f5f5f5; }
+    .category { background: white; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); margin-bottom: 1rem; overflow: hidden; }
+    summary { background: #eee; padding: 1rem; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
+    .items { padding: 1rem; }
+    .item { display: flex; align-items: center; gap: 0.5rem; margin: 0.5rem 0; flex-wrap: wrap; }
+    .item input[type="checkbox"] { width: 24px; height: 24px; }
+    .item input[type="number"] { width: 60px; }
+    .item input[type="text"], .item textarea { flex: 1; resize: vertical; height: 2.5rem; }
+    .readonly-text { flex: 1; font-size: 1rem; }
+    .readonly-text small { font-size: 0.8rem; color: #888; display: block; margin-top: 0.2rem; }
+    .controls { text-align: right; margin-top: 1rem; }
+    button { margin-left: 0.5rem; padding: 0.5rem 1rem; }
+    #error-log { color: red; font-size: 0.9rem; margin-top: 1rem; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>🧳 出國行李準備清單</h1>
+  <div id="list"></div>
+  <div class="controls">
+    <button onclick="saveProgress()">💾 儲存紀錄</button>
+    <button onclick="resetList()">🔄 重設</button>
+  </div>
+  <div id="error-log"></div>
+  <script id="packing-data" type="application/json">
+[
+  {
+    "title": "📄 重要文件與證件",
+    "items": [
+      {
+        "emoji": "🛂",
+        "name": "護照",
+        "note": "有效期至少6個月"
+      },
+      {
+        "emoji": "🪪",
+        "name": "身分證"
+      },
+      {
+        "emoji": "🛃",
+        "name": "簽證、電子入境",
+        "note": "日本入境免簽證"
+      },
+      {
+        "emoji": "✈️",
+        "name": "登機證",
+        "note": "紙本或電子版"
+      },
+      {
+        "emoji": "💳",
+        "name": "信用卡、提款卡"
+      },
+      {
+        "emoji": "💵",
+        "name": "現金",
+        "note": "台幣與當地貨幣"
+      },
+      {
+        "emoji": "📄",
+        "name": "保險資料",
+        "note": "旅遊保險、醫療保險"
+      },
+      {
+        "emoji": "📝",
+        "name": "住宿與交通預訂確認函"
+      },
+      {
+        "emoji": "🖊️",
+        "name": "原子筆",
+        "note": "填寫入境卡用"
+      },
+      {
+        "emoji": "➕",
+        "custom": true
+      },
+      {
+        "emoji": "➕",
+        "custom": true
+      },
+      {
+        "emoji": "➕",
+        "custom": true
+      },
+      {
+        "emoji": "➕",
+        "custom": true
+      },
+      {
+        "emoji": "➕",
+        "custom": true
+      }
+    ]
+  },
+  {
+    "title": "👕 衣物類",
+    "items": [
+      {
+        "emoji": "👕",
+        "name": "上衣",
+        "quantity": 6,
+        "note": "依天數準備"
+      },
+      {
+        "emoji": "👖",
+        "name": "褲子",
+        "quantity": 3,
+        "note": "建議2-3件可替換"
+      },
+      {
+        "emoji": "🧥",
+        "name": "外套",
+        "note": "依氣候選擇"
+      },
+      {
+        "emoji": "🩳",
+        "name": "睡衣"
+      },
+      {
+        "emoji": "🧦",
+        "name": "襪子",
+        "quantity": 6,
+        "note": "依天數準備"
+      },
+      {
+        "emoji": "🧢",
+        "name": "帽子／太陽眼鏡"
+      },
+      {
+        "emoji": "🧤",
+        "name": "手套、圍巾",
+        "note": "寒冷地區"
+      },
+      {
+        "emoji": "👟",
+        "name": "舒適鞋／拖鞋"
+      },
+      {
+        "emoji": "➕",
+        "custom": true
+      },
+      {
+        "emoji": "➕",
+        "custom": true
+      },
+      {
+        "emoji": "➕",
+        "custom": true
+      },
+      {
+        "emoji": "➕",
+        "custom": true
+      },
+      {
+        "emoji": "➕",
+        "custom": true
+      }
+    ]
+  },
+  {
+    "title": "🔌 電子產品",
+    "items": [
+      {
+        "emoji": "📱",
+        "name": "手機與充電器、手錶充電器"
+      },
+      {
+        "emoji": "🔋",
+        "name": "行動電源",
+        "note": "需有標示Wh/mAh"
+      },
+      {
+        "emoji": "🔌",
+        "name": "萬用轉接頭",
+        "note": "日本插座口相同"
+      },
+      {
+        "emoji": "💻",
+        "name": "筆記型電腦／平板",
+        "note": "如需"
+      },
+      {
+        "emoji": "📷",
+        "name": "相機與記憶卡、電池、充電器"
+      },
+      {
+        "emoji": "🎧",
+        "name": "耳機"
+      },
+      {
+        "emoji": "🔌",
+        "name": "延長線",
+        "note": "如需"
+      },
+      {
+        "emoji": "➕",
+        "custom": true
+      },
+      {
+        "emoji": "➕",
+        "custom": true
+      },
+      {
+        "emoji": "➕",
+        "custom": true
+      },
+      {
+        "emoji": "➕",
+        "custom": true
+      },
+      {
+        "emoji": "➕",
+        "custom": true
+      }
+    ]
+  },
+  {
+    "title": "🛁 盥洗用品",
+    "items": [
+      {
+        "emoji": "🪥",
+        "name": "牙刷、牙膏",
+        "note": "飯店皆有備品"
+      },
+      {
+        "emoji": "🧼",
+        "name": "洗面乳、沐浴乳、洗髮精",
+        "note": "飯店皆有備品"
+      },
+      {
+        "emoji": "🧴",
+        "name": "個人護膚品",
+        "note": "化妝水、乳液、防曬"
+      },
+      {
+        "emoji": "🪒",
+        "name": "刮鬍刀／女性個人用品"
+      },
+      {
+        "emoji": "🧽",
+        "name": "毛巾、梳子",
+        "note": "飯店皆有備品"
+      },
+      {
+        "emoji": "🧼",
+        "name": "乾洗手",
+        "note": "勿超過100ML"
+      },
+      {
+        "emoji": "🧴",
+        "name": "防蚊液／止癢藥膏"
+      },
+      {
+        "emoji": "➕",
+        "custom": true
+      },
+      {
+        "emoji": "➕",
+        "custom": true
+      },
+      {
+        "emoji": "➕",
+        "custom": true
+      },
+      {
+        "emoji": "➕",
+        "custom": true
+      },
+      {
+        "emoji": "➕",
+        "custom": true
+      }
+    ]
+  },
+  {
+    "title": "💊 醫藥用品",
+    "items": [
+      {
+        "emoji": "💊",
+        "name": "常備藥",
+        "note": "感冒藥、止痛藥、腸胃藥"
+      },
+      {
+        "emoji": "🩹",
+        "name": "OK繃、紗布、消毒藥水"
+      },
+      {
+        "emoji": "🩺",
+        "name": "個人處方藥",
+        "note": "建議攜帶醫師處方"
+      },
+      {
+        "emoji": "➕",
+        "custom": true
+      },
+      {
+        "emoji": "➕",
+        "custom": true
+      },
+      {
+        "emoji": "➕",
+        "custom": true
+      },
+      {
+        "emoji": "➕",
+        "custom": true
+      },
+      {
+        "emoji": "➕",
+        "custom": true
+      }
+    ]
+  },
+  {
+    "title": "🎒 隨身物品",
+    "items": [
+      {
+        "emoji": "🎫",
+        "name": "機票／交通票券"
+      },
+      {
+        "emoji": "🗾",
+        "name": "行程司機/包車司機/飯店資訊"
+      },
+      {
+        "emoji": "📱",
+        "name": "SIM卡／eSIM設定"
+      },
+      {
+        "emoji": "🧴",
+        "name": "酒精噴霧／乾洗手"
+      },
+      {
+        "emoji": "😷",
+        "name": "口罩"
+      },
+      {
+        "emoji": "🛍️",
+        "name": "折疊購物袋"
+      },
+      {
+        "emoji": "🧳",
+        "name": "行李秤"
+      },
+      {
+        "emoji": "🧻",
+        "name": "衛生紙／濕紙巾"
+      },
+      {
+        "emoji": "➕",
+        "custom": true
+      },
+      {
+        "emoji": "➕",
+        "custom": true
+      },
+      {
+        "emoji": "➕",
+        "custom": true
+      },
+      {
+        "emoji": "➕",
+        "custom": true
+      },
+      {
+        "emoji": "➕",
+        "custom": true
+      }
+    ]
+  }
+]
+  </script>
+  <script>
+    try {
+      const data = JSON.parse(document.getElementById("packing-data").textContent);
+
+      function renderList() {
+        const container = document.getElementById('list');
+        container.innerHTML = '';
+        data.forEach((category, idx) => {
+          const details = document.createElement('details');
+          details.className = 'category';
+          details.open = idx === 0;
+          const summary = document.createElement('summary');
+          summary.textContent = category.title;
+          const content = document.createElement('div');
+          content.className = 'items';
+          category.items.forEach(item => {
+            const row = document.createElement('div');
+            row.className = 'item';
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            const number = document.createElement('input');
+            number.type = 'number';
+            number.min = 1;
+            number.value = item.quantity || 1;
+            const note = document.createElement('textarea');
+            note.placeholder = '備註...';
+            if (item.custom) {
+              const customInput = document.createElement('input');
+              customInput.type = 'text';
+              customInput.placeholder = '請輸入品項名稱';
+              customInput.style.flex = '1';
+              row.append(checkbox, customInput, number, note);
+            } else {
+              const label = document.createElement('div');
+              label.className = 'readonly-text';
+              label.innerHTML = `${item.emoji} ${item.name}` + (item.note ? `<small>${item.note}</small>` : '');
+              row.append(checkbox, label, number, note);
+            }
+            content.appendChild(row);
+          });
+          details.append(summary, content);
+          container.appendChild(details);
+        });
+      }
+
+      function saveProgress() {
+        const checkboxes = document.querySelectorAll('.item input[type="checkbox"]');
+        const names = document.querySelectorAll('.item input[type="text"]');
+        const quantities = document.querySelectorAll('.item input[type="number"]');
+        const notes = document.querySelectorAll('.item textarea');
+        const saved = Array.from(checkboxes).map((c, i) => ({ checked: c.checked, name: names[i]?.value || '', quantity: quantities[i]?.value, note: notes[i]?.value }));
+        localStorage.setItem('packingListProgress', JSON.stringify(saved));
+        alert('✅ 已儲存紀錄！');
+      }
+
+      function resetList() {
+        localStorage.removeItem('packingListProgress');
+        renderList();
+      }
+
+      function restoreProgress() {
+        const saved = JSON.parse(localStorage.getItem('packingListProgress')) || [];
+        const checkboxes = document.querySelectorAll('.item input[type="checkbox"]');
+        const names = document.querySelectorAll('.item input[type="text"]');
+        const quantities = document.querySelectorAll('.item input[type="number"]');
+        const notes = document.querySelectorAll('.item textarea');
+        saved.forEach((item, i) => {
+          if (checkboxes[i]) checkboxes[i].checked = item.checked;
+          if (names[i]) names[i].value = item.name;
+          if (quantities[i]) quantities[i].value = item.quantity;
+          if (notes[i]) notes[i].value = item.note;
+        });
+      }
+
+      renderList();
+      restoreProgress();
+    } catch (err) {
+      document.getElementById("error-log").textContent = "⚠️ 錯誤：" + err.message;
+    }
+  </script>
+</body>
+</html>
